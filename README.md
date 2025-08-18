@@ -1,8 +1,3 @@
-To run the app:
-Add the api keys in the constants file
-
-
-
 Basic flow:
 
 Based on mvvm/clean architecture
