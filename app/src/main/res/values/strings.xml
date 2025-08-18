@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">goongoonaloAssignment</string>
+    <string name="users_list">Users list</string>
+    <string name="not_connected">⚠️ You aren’t connected to the internet</string>
+</resources>
