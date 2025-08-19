@@ -12,14 +12,17 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MovieDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.NONE)
     suspend fun insertTopMovies(movies: TopMovieEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.NONE)
     suspend fun insertNewMovies(movies: NewMovieEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.NONE)
     suspend fun insertContinueMovies(movies: ContinueMovieEntity)
+
+    @Query("SELECT MAX(`order`) FROM continuemovies ")
+    fun getMovieCount(): Int?
 
     @Query("SELECT * FROM topmovies ")
     fun getAllTopMovies(): Flow<List<TopMovieEntity>>
@@ -29,6 +32,9 @@ interface MovieDao {
 
     @Query("SELECT * FROM continuemovies ")
     fun getAllContinueMovies(): Flow<List<ContinueMovieEntity>>
+
+    @Query("DELETE FROM continuemovies WHERE `title` = :title")
+    fun deleteContinueMovie(title: String)
 
     @Query("DELETE FROM newmovies")
     suspend fun deleteAllNewMovies()

@@ -55,7 +55,7 @@ private fun Context.syncWorkNotification(): Notification {
         SYNC_NOTIFICATION_CHANNEL_ID,
     )
         .setSmallIcon(R.drawable.ic_launcher_background)
-        .setContentTitle("Created user synced to server")
+        .setContentTitle("Sample notification for api<11")
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .build()
 }

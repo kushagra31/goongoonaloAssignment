@@ -9,7 +9,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,13 +25,11 @@ class MoviesViewModel @AssistedInject constructor(
     val moviesList: StateFlow<MoviesResponse> = _moviesList.asStateFlow()
 
     init {
-        triggerInitialFetchIfNecessary()
+        triggerInitialFetch()
     }
-    private fun triggerInitialFetchIfNecessary() {
+    private fun triggerInitialFetch() {
         viewModelScope.launch {
-            coroutineScope {
-                repository.scheduleInitialMovieFetchAndPeriodicSync()
-            }
+            repository.scheduleInitialMovieFetchAndPeriodicSync()
             repository.getMovies().collect {
                 _moviesList.value = it
             }

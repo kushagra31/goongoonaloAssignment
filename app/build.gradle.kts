@@ -46,6 +46,7 @@ android {
 
 dependencies {
     implementation(libs.bundles.appModuleLibraries)
+    implementation(libs.runtime.livedata)
     ksp(libs.hiltAndroidCompiler)
     ksp(libs.roomksp)
     ksp(libs.hilt.ext.compiler)

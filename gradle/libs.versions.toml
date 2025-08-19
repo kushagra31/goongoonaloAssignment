@@ -34,7 +34,9 @@ coil = "3.1.0"
 androidxHiltNavigationCompose = "1.2.0"
 workManager = "2.7.0"
 hiltCommon = "1.2.0"
+splashscreen = "1.0.1"
 testng = "6.9.6"
+runtimeLivedata = "1.9.0"
 
 [libraries]
 androidCorektx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -94,6 +96,8 @@ coilOkhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version
 room = { group = "androidx.room", name = "room-runtime", version.ref = "roomVersion" }
 roomksp = { group = "androidx.room", name = "room-compiler", version.ref = "roomVersion" }
 workmanager = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager" }
+splashscreen = {group = "androidx.core",name = "core-splashscreen", version.ref = "splashscreen" }
+runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 [bundles]
 appModuleLibraries = [
@@ -120,7 +124,8 @@ appModuleLibraries = [
     "androidxHiltNavigationCompose",
     "hiltGradle",
     "workmanager",
-    "hilt-work"
+    "hilt-work",
+    "splashscreen"
 ]
 customViewsLibraries = [
     "androidAppCompat",

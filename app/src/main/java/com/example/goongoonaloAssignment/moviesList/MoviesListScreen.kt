@@ -53,6 +53,7 @@ private fun MoviesListScreen(
 ) {
     val movies = moviesViewModel.moviesList.collectAsState()
     val movieDetailsState = movies.value
+
     Box(
         modifier = Modifier
             .fillMaxSize()

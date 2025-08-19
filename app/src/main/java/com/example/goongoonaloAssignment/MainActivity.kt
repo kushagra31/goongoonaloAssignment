@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -17,16 +18,21 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import com.example.customviews.ConfigurableText
+import com.example.data.sync.SyncWorker
 import com.example.goongoonaloAssignment.moviesList.MoviesListRoute
-import com.example.network.NetworkMonitor
 import com.example.goongoonaloAssignment.navigation.SampleAppNavHost
 import com.example.goongoonaloAssignment.ui.PCATheme
+import com.example.network.NetworkMonitor
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -40,10 +46,21 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val workManager = WorkManager.getInstance(applicationContext)
+        workManager.enqueueUniqueWork(
+            "UserWorkName",
+            ExistingWorkPolicy.KEEP,
+            SyncWorker.startUpSyncWork()
+        )
         setContent {
             val appState = rememberSampleAppState(networkMonitor)
+            val workInfos = workManager
+                .getWorkInfosForUniqueWorkLiveData("UserWorkName")
+                .observeAsState().value
+
+            val workInfoSuccess = workInfos?.get(0)?.state?.isFinished ?: false
             PCATheme {
-                SampleApp(appState)
+                SampleApp(appState, workInfoSuccess = workInfoSuccess)
             }
         }
     }
@@ -55,6 +72,7 @@ fun SampleApp(
     appState: SampleAppState,
     startDestination: Any = MoviesListRoute,
     modifier: Modifier = Modifier,
+    workInfoSuccess: Boolean
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val destination = appState.currentTopLevelDestination
@@ -92,7 +110,7 @@ fun SampleApp(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                SampleAppNavHost(appState, startDestination, modifier)
+                if (!workInfoSuccess) CircularProgressIndicator(modifier.align(Alignment.Center)) else SampleAppNavHost(appState, startDestination, modifier)
             }
         },
     )

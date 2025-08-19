@@ -11,8 +11,10 @@ import com.example.model.toContinueMovieEntity
 import com.example.model.toNewMovieEntity
 import com.example.model.toTopMovieEntity
 import com.example.network.MoviesApiService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface MoviesRepository : Syncable {
@@ -25,7 +27,7 @@ interface MoviesRepository : Syncable {
 
     suspend fun addToContinueMovies(movie: ResultResponse)
 
-    suspend fun deleteAllMovies(): Boolean
+    suspend fun deleteAllMovies()
 
 }
 
@@ -47,7 +49,6 @@ class MoviesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun scheduleInitialMovieFetchAndPeriodicSync() {
-        syncManager.requestSync()
         syncManager.requestPeriodicSync()
     }
 
@@ -55,16 +56,19 @@ class MoviesRepositoryImpl @Inject constructor(
         return movieDao.getContinueMovieCount() == 0
     }
 
-    override suspend fun addToContinueMovies(movie: ResultResponse) {
-        movieDao.insertContinueMovies(movie.toContinueMovieEntity(movieDao.getContinueMovieCount() + 1))
-        getMovies()
-    }
+    override suspend fun addToContinueMovies(movie: ResultResponse): Unit =
+        withContext(Dispatchers.IO) {
+            movieDao.deleteContinueMovie(movie.title ?: "")
+            movieDao.insertContinueMovies(
+                movie.toContinueMovieEntity((movieDao.getMovieCount() ?: 0) + 1)
+            )
+            getMovies()
+        }
 
-    override suspend fun deleteAllMovies(): Boolean {
+    override suspend fun deleteAllMovies() = withContext(Dispatchers.IO) {
         movieDao.deleteAllNewMovies()
         movieDao.deleteAllTopMovies()
         movieDao.deleteAllContinueMovies()
-        return true
     }
 
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean {
