@@ -24,7 +24,7 @@ class MovieSyncManager @Inject constructor(
 ) : SyncManager {
     override val isSyncing: Flow<Boolean> = WorkManager
         .getInstance(context)
-        .getWorkInfosForUniqueWorkLiveData(PERIODIC_MOVIES_SYNC_WORK_NAME)
+        .getWorkInfosForUniqueWorkLiveData(ONETIME_MOVIES_SYNC_WORK_NAME)
         .asFlow().map { workInfos ->
             !(workInfos[0]?.state?.isFinished ?: true)
         }

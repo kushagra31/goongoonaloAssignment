@@ -7,8 +7,8 @@ import com.example.model.ResultResponse
 @Entity(tableName = "topmovies")
 data class TopMovieEntity(
     @PrimaryKey
-    val order: Int,
     val title: String,
+    val order: Int,
     val posterPath: String,
     var lastRefreshed: Long = System.currentTimeMillis() // For cache invalidation logic
 )
@@ -16,8 +16,8 @@ data class TopMovieEntity(
 @Entity(tableName = "newmovies")
 data class NewMovieEntity(
     @PrimaryKey
-    val order: Int,
     val title: String,
+    val order: Int,
     val posterPath: String,
     var lastRefreshed: Long = System.currentTimeMillis() // For cache invalidation logic
 )
@@ -25,8 +25,8 @@ data class NewMovieEntity(
 @Entity(tableName = "continuemovies")
 data class ContinueMovieEntity(
     @PrimaryKey
-    val order: Int,
     val title: String,
+    val order: Int,
     val posterPath: String,
     var lastRefreshed: Long = System.currentTimeMillis() // For cache invalidation logic
 )

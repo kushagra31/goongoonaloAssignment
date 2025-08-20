@@ -64,7 +64,6 @@ class MoviesRepositoryImpl @Inject constructor(
 
     override suspend fun addToContinueMovies(movie: ResultResponse): Unit =
         withContext(Dispatchers.IO) {
-            movieDao.deleteContinueMovie(movie.title ?: "")
             movieDao.insertContinueMovies(
                 movie.toContinueMovieEntity((movieDao.getMaxOrderInContinueMovies() ?: 0) + 1)
             )
@@ -78,7 +77,6 @@ class MoviesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean {
-        deleteAllMovies()
         val movieService = moviesApiService.getMovies()
         val topMovieEntity = movieService.topMovies
         val newMovieEntity = movieService.newMovies

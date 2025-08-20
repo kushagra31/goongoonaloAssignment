@@ -18,7 +18,7 @@ interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.NONE)
     suspend fun insertNewMovies(movies: NewMovieEntity)
 
-    @Insert(onConflict = OnConflictStrategy.NONE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertContinueMovies(movies: ContinueMovieEntity)
 
     @Query("SELECT MAX(`order`) FROM continuemovies ")
@@ -32,9 +32,6 @@ interface MovieDao {
 
     @Query("SELECT * FROM continuemovies ")
     fun getAllContinueMovies(): Flow<List<ContinueMovieEntity>>
-
-    @Query("DELETE FROM continuemovies WHERE `title` = :title")
-    fun deleteContinueMovie(title: String)
 
     @Query("DELETE FROM newmovies")
     suspend fun deleteAllNewMovies()
