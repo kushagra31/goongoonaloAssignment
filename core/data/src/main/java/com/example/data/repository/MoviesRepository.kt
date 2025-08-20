@@ -77,6 +77,7 @@ class MoviesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean {
+        deleteAllMovies()
         val movieService = moviesApiService.getMovies()
         val topMovieEntity = movieService.topMovies
         val newMovieEntity = movieService.newMovies
