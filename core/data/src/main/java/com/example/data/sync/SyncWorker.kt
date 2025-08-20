@@ -51,9 +51,12 @@ class SyncWorker @AssistedInject constructor(
             .build()
 
         fun schedulePeriodicWork() = PeriodicWorkRequestBuilder<DelegatingWorker>(
-            3,
+            15,
             TimeUnit.MINUTES
-        ).setConstraints(SyncConstraints)
+        )
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .setConstraints(SyncConstraints)
+            .setInputData(SyncWorker::class.delegatedData())
             .build()
 
     }

@@ -106,7 +106,7 @@ private fun MovieList(
                         modifier = Modifier
                             .padding(
                                 16.dp
-                            )
+                            ).size(height = 186.dp, width = 108.dp)
                             .clickable {
                                 onMovieClick(usersData.asExternalModel())
                             },

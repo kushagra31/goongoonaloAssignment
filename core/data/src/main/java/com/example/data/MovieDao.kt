@@ -22,7 +22,7 @@ interface MovieDao {
     suspend fun insertContinueMovies(movies: ContinueMovieEntity)
 
     @Query("SELECT MAX(`order`) FROM continuemovies ")
-    fun getMovieCount(): Int?
+    fun getMaxOrderInContinueMovies(): Int?
 
     @Query("SELECT * FROM topmovies ")
     fun getAllTopMovies(): Flow<List<TopMovieEntity>>

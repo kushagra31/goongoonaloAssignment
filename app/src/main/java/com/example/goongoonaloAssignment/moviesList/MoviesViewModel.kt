@@ -12,6 +12,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = MoviesViewModel.Factory::class)
@@ -27,11 +29,14 @@ class MoviesViewModel @AssistedInject constructor(
     init {
         triggerInitialFetch()
     }
+
     private fun triggerInitialFetch() {
         viewModelScope.launch {
             repository.scheduleInitialMovieFetchAndPeriodicSync()
-            repository.getMovies().collect {
-                _moviesList.value = it
+            repository.movieSyncing().flatMapLatest { isSyncing ->
+                if (isSyncing) emptyFlow() else repository.getMovies()
+            }.collect { moviesResponse ->
+                _moviesList.value = moviesResponse
             }
         }
     }

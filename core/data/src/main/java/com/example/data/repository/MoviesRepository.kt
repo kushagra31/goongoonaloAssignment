@@ -23,6 +23,8 @@ interface MoviesRepository : Syncable {
 
     suspend fun scheduleInitialMovieFetchAndPeriodicSync()
 
+    suspend fun movieSyncing(): Flow<Boolean>
+
     suspend fun shouldFetchInitialMovies(): Boolean
 
     suspend fun addToContinueMovies(movie: ResultResponse)
@@ -49,8 +51,12 @@ class MoviesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun scheduleInitialMovieFetchAndPeriodicSync() {
+        syncManager.requestSync()
         syncManager.requestPeriodicSync()
     }
+
+    override suspend fun movieSyncing(): Flow<Boolean> =
+        syncManager.isSyncing
 
     override suspend fun shouldFetchInitialMovies(): Boolean {
         return movieDao.getContinueMovieCount() == 0
@@ -60,7 +66,7 @@ class MoviesRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             movieDao.deleteContinueMovie(movie.title ?: "")
             movieDao.insertContinueMovies(
-                movie.toContinueMovieEntity((movieDao.getMovieCount() ?: 0) + 1)
+                movie.toContinueMovieEntity((movieDao.getMaxOrderInContinueMovies() ?: 0) + 1)
             )
             getMovies()
         }

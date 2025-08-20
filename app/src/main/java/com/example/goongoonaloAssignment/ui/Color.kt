@@ -7,9 +7,9 @@ val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
 
-val background = Color(0xFFFFFBFE)
+val background = Color(0xFF1C1B1F)
 val onTertiary = Color.White
-val onBackground = Color(0xFF1C1B1F)
+val onBackground = Color(0xFFFFFBFE)
 
 //Dark Theme
 val Purple40 = Color(0xFF6650a4)

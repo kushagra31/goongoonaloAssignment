@@ -1,11 +1,13 @@
 package com.example.data.sync
 
 import android.content.Context
+import androidx.lifecycle.asFlow
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
@@ -20,16 +22,18 @@ interface SyncManager {
 class MovieSyncManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) : SyncManager {
-    override val isSyncing: Flow<Boolean>
-        get() = TODO("Not yet implemented")
+    override val isSyncing: Flow<Boolean> = WorkManager
+        .getInstance(context)
+        .getWorkInfosForUniqueWorkLiveData(PERIODIC_MOVIES_SYNC_WORK_NAME)
+        .asFlow().map { workInfos ->
+            !(workInfos[0]?.state?.isFinished ?: true)
+        }
 
     override fun requestSync() {
-
         val workManager = WorkManager
             .getInstance(context)
-
         workManager.enqueueUniqueWork(
-            USER_SYNC_WORK_NAME,
+            ONETIME_MOVIES_SYNC_WORK_NAME,
             ExistingWorkPolicy.KEEP,
             SyncWorker.startUpSyncWork()
         )
@@ -37,11 +41,12 @@ class MovieSyncManager @Inject constructor(
 
     override fun requestPeriodicSync() {
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            "UniquePeriodicSync",
+            PERIODIC_MOVIES_SYNC_WORK_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
             SyncWorker.schedulePeriodicWork()
         )
     }
 }
 
-internal const val USER_SYNC_WORK_NAME = "UserWorkName"
+internal const val ONETIME_MOVIES_SYNC_WORK_NAME = "OneTimeMoviesSyncWorkName"
+internal const val PERIODIC_MOVIES_SYNC_WORK_NAME = "PeriodicMoviesSyncWorkName"
